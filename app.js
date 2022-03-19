@@ -5,6 +5,7 @@ const cardsEstudiantes = document.querySelector("#cardsEstudiantes")
 const cardsProfesores = document.querySelector("#cardsProfesores")
 const templateEstudiante = document.querySelector("#templateEstudiante").content
 const templateProfesor = document.querySelector("#templateProfesor").content
+const alerta = document.querySelector(".alert")
 
 const estudiantes = []
 const profesores = []
@@ -13,6 +14,7 @@ class Persona {
     constructor(nombre, edad){
         this.nombre = nombre
         this.edad = edad
+        this.uid = `${Date.now()}`              // para transformar a string
     }
 
     static pintarPersonaUI(personas, tipo){
@@ -68,8 +70,8 @@ class Estudiante extends Persona {
 
         clone.querySelector('.badge').textContent = this.#estado ? "Aprobado" : "Reprobado"
 
-        clone.querySelector(".btn-success").dataset.nombre = this.nombre
-        clone.querySelector(".btn-danger").dataset.nombre = this.nombre
+        clone.querySelector(".btn-success").dataset.uid = this.uid
+        clone.querySelector(".btn-danger").dataset.uid = this.uid
 
         return clone
     }
@@ -91,11 +93,11 @@ class Profesor extends Persona {
 
 document.addEventListener("click", e => {
     //console.log(e.target.dataset.nombre)
-    if (e.target.dataset.nombre) {
+    if (e.target.dataset.uid) {
         //console.log(e.target.matches(".btn-success"))
         if (e.target.matches(".btn-success")) {     // si boton esta activado  true
             estudiantes.map(item => {               // recorre y busca
-                if (item.nombre === e.target.dataset.nombre) {
+                if (item.uid === e.target.dataset.uid) {
                     item.setEstado = true
                 }
                 return item
@@ -103,7 +105,7 @@ document.addEventListener("click", e => {
         }
         if (e.target.matches(".btn-danger")) {     // si boton esta activado  true
             estudiantes.map(item => {               // recorre y busca
-                if (item.nombre === e.target.dataset.nombre) {
+                if (item.uid === e.target.dataset.uid) {
                     item.setEstado = false
                 }
                 return item
@@ -123,6 +125,19 @@ formulario.addEventListener('submit', e => {
     //console.log( [...datos.values()])
     const [nombre, edad, opcion] = [...datos.values()]
     //console.log(nombre, edad, opcion)
+
+    // validación de datos
+    alerta.classList.add("d-none")
+    if ( !nombre.trim() || !edad.trim() || !opcion.trim() ){
+        console.log('datos en blanco')
+        alerta.classList.remove('d-none')
+        return
+    }
+
+
+
+
+
 
     if (opcion === "Estudiante") {
         const estudiante = new Estudiante(nombre,edad)
